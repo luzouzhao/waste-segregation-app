@@ -13,7 +13,7 @@
 | 事项 | 说明 |
 | --- | --- |
 | `requirements.txt` | `torch` / `torchvision` 改为 PyTorch 官方 CPU 源（`+cpu`）；PyPI 的 Linux 版 torch 会连带下载 2.5 GB 以上的 CUDA 依赖，云端构建会超时或超磁盘 |
-| `packages.txt` | 新增，让云端自动安装 `libgl1`、`libglib2.0-0`，否则 `import cv2` 会报 libGL 错误 |
+| `packages.txt` | 新增，让云端自动安装 `libgl1`、`libglib2.0-0t64`，否则 `import cv2` 会报 libGL 错误（注意：该文件只能一行一个包名，**不能写注释**） |
 | `assets/fonts/NotoSansSC.ttf` | 内置中文字体（约 17 MB），云端生成的 PDF 报告中文不会乱码；同时保留了 Windows 字体作为回退 |
 | `.gitignore` | 放行 3 个必需权重与 `reports/` 评估文件，其余大文件仍然忽略 |
 | `src/utils/history_db.py` | 自动创建 `data/` 目录，避免全新克隆下来的仓库因缺目录而报错 |

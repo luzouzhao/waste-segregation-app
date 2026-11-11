@@ -1,4 +1,2 @@
-# Streamlit Community Cloud 部署时自动 apt 安装的系统库。
-# OpenCV（opencv-python）在 Linux 上需要 libGL 与 libglib 才能正常 import。
 libgl1
-libglib2.0-0
+libglib2.0-0t64
