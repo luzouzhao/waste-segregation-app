@@ -12,7 +12,7 @@
 
 | 事项 | 说明 |
 | --- | --- |
-| `requirements.txt` | `torch` / `torchvision` 改为 PyPI 的 CPU 版本（原来带 `+cu124`，Linux 上装不了） |
+| `requirements.txt` | `torch` / `torchvision` 改为 PyTorch 官方 CPU 源（`+cpu`）；PyPI 的 Linux 版 torch 会连带下载 2.5 GB 以上的 CUDA 依赖，云端构建会超时或超磁盘 |
 | `packages.txt` | 新增，让云端自动安装 `libgl1`、`libglib2.0-0`，否则 `import cv2` 会报 libGL 错误 |
 | `assets/fonts/NotoSansSC.ttf` | 内置中文字体（约 17 MB），云端生成的 PDF 报告中文不会乱码；同时保留了 Windows 字体作为回退 |
 | `.gitignore` | 放行 3 个必需权重与 `reports/` 评估文件，其余大文件仍然忽略 |
@@ -103,7 +103,8 @@ git push -u origin main
 
 | 现象 | 原因 / 处理 |
 | --- | --- |
-| 构建日志里 `No matching distribution found for torch==2.6.0` | Python 版本选错。删掉应用重新部署，Advanced settings 里选 3.12 |
+| 构建日志里 `No matching distribution found for torch==2.6.0+cpu` | Python 版本选错。到应用设置里把 Python 版本改为 3.12 后重新部署 |
+| 构建日志出现大量 `nvidia-*` 下载 / 卡在 Installing dependencies | `requirements.txt` 顶部缺少 `--extra-index-url https://download.pytorch.org/whl/cpu`，会导致安装 2.5 GB 的 CUDA 依赖 |
 | `ImportError: libGL.so.1: cannot open shared object file` | `packages.txt` 没生效。确认它和 `requirements.txt` 在同一层目录且已推送 |
 | 页面报 `Classifier checkpoint not found` | `runs/classify/train-2/weights/best.pt` 没进仓库。本地执行 `git ls-files runs` 检查，补提交后重新部署 |
 | 模型对比页空白 / 报找不到 npy | `reports/` 没进仓库，同样用 `git ls-files reports` 检查 |
