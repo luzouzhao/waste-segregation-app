@@ -1,0 +1,77 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# macOS
+.DS_Store
+
+# Windows
+thumbs.db
+
+# Environment (contains API keys)
+.env
+.venv/
+
+# Local tool caches
+.kagglehub/
+.ultralytics/
+.tmp/
+.home/
+.pip-cache/
+.torch/
+pip-build-*/
+pip-install-*/
+pip-unpack-*/
+pip-ephem-*/
+
+# Data (regeneratable)
+data/raw/
+data/processed/
+data/sample_images/
+data/waste_metadata.db
+
+# Model weights
+# 说明：云端部署需要下面 3 个权重文件随仓库提交，其余权重仍忽略。
+*.pt
+*.pth
+*.pkl
+models/dl/*
+!models/dl/best_model.pt
+models/ml/
+
+# 检测模型（YOLOv8n COCO 预训练，会在首次推理时自动下载，随仓库提交可省去等待）
+!yolov8n.pt
+
+# Training runs（只保留模型对比页要用的训练日志与上线权重）
+runs/*
+!runs/classify/
+runs/classify/*
+!runs/classify/train-2/
+runs/classify/train-2/*
+!runs/classify/train-2/args.yaml
+!runs/classify/train-2/results.csv
+!runs/classify/train-2/results.png
+!runs/classify/train-2/weights/
+runs/classify/train-2/weights/*
+!runs/classify/train-2/weights/best.pt
+
+# 注：reports/ 为评估证据（混淆矩阵、F1 报告、训练日志），需随项目提交，不忽略
+
+# IDE
+.vscode/
+.idea/
+
+# Video (large binaries)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
+# Logs
+logs/
