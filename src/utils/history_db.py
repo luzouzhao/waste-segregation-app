@@ -6,7 +6,7 @@ timestamp, image_filename, category, confidence, recyclable, hazard_level, city.
 
 import sqlite3
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
@@ -14,6 +14,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 import config.settings as s
 
 _INIT_DONE: bool = False
+
+# 云端容器时区是 UTC，用 localtime 记录会比北京时间慢 8 小时，这里固定按东八区写入。
+_BEIJING_TZ = timezone(timedelta(hours=8))
+
+
+def _now_beijing() -> str:
+    """返回东八区当前时间字符串（YYYY-MM-DD HH:MM:SS）。"""
+    return datetime.now(_BEIJING_TZ).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def _get_connection() -> sqlite3.Connection:
@@ -30,7 +38,7 @@ def _get_connection() -> sqlite3.Connection:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS disposal_history (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp TEXT DEFAULT (datetime('now', 'localtime')),
+                timestamp TEXT DEFAULT (datetime('now', '+8 hours')),
                 image_filename TEXT,
                 category TEXT NOT NULL,
                 confidence REAL,
@@ -53,13 +61,14 @@ def log_disposal(result: dict, city: str = "") -> None:
         city: Optional city string provided by the user.
     """
     conn = _get_connection()
-    cur = conn.execute(
+    conn.execute(
         """
         INSERT INTO disposal_history
-            (image_filename, category, confidence, recyclable, hazard_level, city)
-        VALUES (?, ?, ?, ?, ?, ?)
+            (timestamp, image_filename, category, confidence, recyclable, hazard_level, city)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
         (
+            _now_beijing(),
             result.get("image_filename", ""),
             result.get("category", ""),
             result.get("confidence", 0.0),
