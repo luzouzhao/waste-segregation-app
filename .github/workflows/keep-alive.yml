@@ -1,0 +1,23 @@
+name: 保活 Streamlit 应用
+
+# 免费版 Streamlit Community Cloud 在连续 12 小时无访问后会休眠，
+# 这里定时访问一次应用地址，尽量避免休眠。
+on:
+  schedule:
+    # 每 30 分钟访问一次（GitHub 定时任务可能有几分钟延迟）
+    - cron: "*/30 * * * *"
+  # 允许在 Actions 页面手动点一下测试
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 访问应用首页
+        run: |
+          url="https://waste-segregation-app-5dfsznx7qb3waybuwbksxa.streamlit.app/"
+          jar="$(mktemp)"
+          # Streamlit 首次访问会 303 跳到 auth 接口换取会话，必须带 cookie 才能拿到 200
+          code=$(curl -s -L -c "$jar" -b "$jar" -o /dev/null -w "%{http_code}" --max-time 90 "$url")
+          rm -f "$jar"
+          echo "HTTP $code"
